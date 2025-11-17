@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { format, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from 'date-fns';
 import { Download, Search, TrendingUp, CreditCard, RefreshCw, DollarSign } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { getDashboardSummary, getTransactions, exportTransactions } from '../lib/api';
 import { formatCurrency, formatDateTime, downloadFile } from '../lib/utils';
 
@@ -279,9 +279,9 @@ export default function Dashboard() {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
-                  label={(entry) => `${entry.method}: ${formatCurrency(entry.revenue)}`}
+                  label={(item) => `${item.method}: ${formatCurrency(item.revenue)}`}
                 >
-                  {summary.charts.revenueByPaymentMethod.map((entry: any, index: number) => (
+                  {summary.charts.revenueByPaymentMethod.map((_: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

@@ -1,4 +1,4 @@
-import { PrismaClient, InvoiceStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -83,7 +83,7 @@ export async function createInvoice(data: any) {
       invoiceNumber,
       issueDate: new Date(data.issueDate),
       dueDate: new Date(data.dueDate),
-      status: data.status || InvoiceStatus.DRAFT,
+      status: data.status || 'DRAFT',
       customerName: data.customerName,
       customerEmail: data.customerEmail,
       customerAddress: data.customerAddress || null,
@@ -178,7 +178,7 @@ export async function duplicateInvoice(id: string) {
       invoiceNumber,
       issueDate: new Date(),
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      status: InvoiceStatus.DRAFT,
+      status: 'DRAFT',
       customerName: original.customerName,
       customerEmail: original.customerEmail,
       customerAddress: original.customerAddress,

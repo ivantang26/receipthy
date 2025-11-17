@@ -1,4 +1,4 @@
-import { PrismaClient, TransactionStatus, PaymentMethod } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -25,10 +25,10 @@ export async function getDashboardSummary(
 
   // Calculate KPIs
   const completedTransactions = transactions.filter(
-    (t) => t.status === TransactionStatus.COMPLETED
+    (t) => t.status === 'COMPLETED'
   );
   const refundedTransactions = transactions.filter(
-    (t) => t.status === TransactionStatus.REFUNDED
+    (t) => t.status === 'REFUNDED'
   );
 
   const totalRevenue = completedTransactions.reduce((sum, t) => sum + t.grossAmount, 0);

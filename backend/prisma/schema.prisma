@@ -16,8 +16,8 @@ model Transaction {
   grossAmount    Float
   netAmount      Float
   taxAmount      Float
-  paymentMethod  PaymentMethod
-  status         TransactionStatus
+  paymentMethod  String            // CASH, CARD, E_WALLET, OTHER
+  status         String            // COMPLETED, REFUNDED, VOIDED
   receiptNumber  String            @unique
   invoiceId      String?
   invoice        Invoice?          @relation(fields: [invoiceId], references: [id])
@@ -48,7 +48,7 @@ model Invoice {
   invoiceNumber   String        @unique
   issueDate       DateTime
   dueDate         DateTime
-  status          InvoiceStatus
+  status          String        // DRAFT, SENT, PAID, OVERDUE, CANCELLED
   customerName    String
   customerEmail   String
   customerAddress String?
@@ -85,8 +85,8 @@ model Receipt {
   receiptNumber     String        @unique
   dateTime          DateTime
   amount            Float
-  paymentMethod     PaymentMethod
-  source            ReceiptSource
+  paymentMethod     String        // CASH, CARD, E_WALLET, OTHER
+  source            String        // POS, MANUAL, IMPORTED
   relatedInvoiceId  String?
   relatedInvoice    Invoice?      @relation(fields: [relatedInvoiceId], references: [id])
   notes             String?
@@ -97,30 +97,6 @@ model Receipt {
   @@index([source])
 }
 
-enum PaymentMethod {
-  CASH
-  CARD
-  E_WALLET
-  OTHER
-}
-
-enum TransactionStatus {
-  COMPLETED
-  REFUNDED
-  VOIDED
-}
-
-enum InvoiceStatus {
-  DRAFT
-  SENT
-  PAID
-  OVERDUE
-  CANCELLED
-}
-
-enum ReceiptSource {
-  POS
-  MANUAL
-  IMPORTED
-}
+// Note: SQLite doesn't support native enums, so we use String fields instead
+// Valid values are documented in the field comments above
 

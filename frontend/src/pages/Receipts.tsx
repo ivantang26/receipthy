@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Link as LinkIcon } from 'lucide-react';
-import { getReceipts, deleteReceipt, getInvoices } from '../lib/api';
+import { getReceipts, deleteReceipt } from '../lib/api';
 import { formatCurrency, formatDateTime } from '../lib/utils';
 import ReceiptForm from '../components/ReceiptForm';
 

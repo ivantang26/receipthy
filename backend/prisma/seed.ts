@@ -1,4 +1,4 @@
-import { PrismaClient, PaymentMethod, TransactionStatus, InvoiceStatus, ReceiptSource } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -6,8 +6,8 @@ function randomDate(start: Date, end: Date): Date {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
 
-function randomPaymentMethod(): PaymentMethod {
-  const methods = [PaymentMethod.CASH, PaymentMethod.CARD, PaymentMethod.E_WALLET, PaymentMethod.OTHER];
+function randomPaymentMethod(): string {
+  const methods = ['CASH', 'CARD', 'E_WALLET', 'OTHER'];
   return methods[Math.floor(Math.random() * methods.length)];
 }
 
@@ -30,12 +30,12 @@ async function main() {
     const dueDate = new Date(issueDate);
     dueDate.setDate(dueDate.getDate() + 30);
     
-    const statuses = [InvoiceStatus.DRAFT, InvoiceStatus.SENT, InvoiceStatus.PAID, InvoiceStatus.OVERDUE];
+    const statuses = ['DRAFT', 'SENT', 'PAID', 'OVERDUE'];
     let status = statuses[Math.floor(Math.random() * statuses.length)];
     
     // Mark as overdue if past due date and not paid
-    if (new Date() > dueDate && status === InvoiceStatus.SENT) {
-      status = InvoiceStatus.OVERDUE;
+    if (new Date() > dueDate && status === 'SENT') {
+      status = 'OVERDUE';
     }
 
     const itemCount = Math.floor(Math.random() * 4) + 1;
@@ -90,7 +90,7 @@ async function main() {
 
   for (let i = 0; i < 200; i++) {
     const dateTime = randomDate(startDate, endDate);
-    const status = Math.random() > 0.95 ? TransactionStatus.REFUNDED : TransactionStatus.COMPLETED;
+    const status = Math.random() > 0.95 ? 'REFUNDED' : 'COMPLETED';
     const paymentMethod = randomPaymentMethod();
     
     const itemCount = Math.floor(Math.random() * 5) + 1;
@@ -138,7 +138,7 @@ async function main() {
   const receipts = [];
   for (let i = 0; i < 30; i++) {
     const dateTime = randomDate(startDate, endDate);
-    const source = i < 10 ? ReceiptSource.POS : i < 20 ? ReceiptSource.MANUAL : ReceiptSource.IMPORTED;
+    const source = i < 10 ? 'POS' : i < 20 ? 'MANUAL' : 'IMPORTED';
     const amount = parseFloat((Math.random() * 500 + 50).toFixed(2));
     const paymentMethod = randomPaymentMethod();
     
