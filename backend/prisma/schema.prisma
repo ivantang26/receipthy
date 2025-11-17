@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Transaction {
+  id             String            @id @default(uuid())
+  dateTime       DateTime
+  grossAmount    Float
+  netAmount      Float
+  taxAmount      Float
+  paymentMethod  PaymentMethod
+  status         TransactionStatus
+  receiptNumber  String            @unique
+  invoiceId      String?
+  invoice        Invoice?          @relation(fields: [invoiceId], references: [id])
+  items          TransactionItem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([dateTime])
+  @@index([status])
+  @@index([paymentMethod])
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  productName   String
+  quantity      Int
+  unitPrice     Float
+  lineTotal     Float
+  createdAt     DateTime    @default(now())
+
+  @@index([transactionId])
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  invoiceNumber   String        @unique
+  issueDate       DateTime
+  dueDate         DateTime
+  status          InvoiceStatus
+  customerName    String
+  customerEmail   String
+  customerAddress String?
+  subtotal        Float
+  tax             Float
+  total           Float
+  notes           String?
+  items           InvoiceItem[]
+  transactions    Transaction[]
+  receipts        Receipt[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status])
+  @@index([issueDate])
+  @@index([dueDate])
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int
+  unitPrice   Float
+  lineTotal   Float
+  createdAt   DateTime @default(now())
+
+  @@index([invoiceId])
+}
+
+model Receipt {
+  id                String        @id @default(uuid())
+  receiptNumber     String        @unique
+  dateTime          DateTime
+  amount            Float
+  paymentMethod     PaymentMethod
+  source            ReceiptSource
+  relatedInvoiceId  String?
+  relatedInvoice    Invoice?      @relation(fields: [relatedInvoiceId], references: [id])
+  notes             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([dateTime])
+  @@index([source])
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  E_WALLET
+  OTHER
+}
+
+enum TransactionStatus {
+  COMPLETED
+  REFUNDED
+  VOIDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum ReceiptSource {
+  POS
+  MANUAL
+  IMPORTED
+}
+
